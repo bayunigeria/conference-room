@@ -152,7 +152,7 @@
   }
   .launcher-sub {
     font-size: 12px; color: rgba(255,255,255,0.35);
-    margin-top: -12px;
+    margin-top: -6px;
   }
 
   .input-wrap {
@@ -404,7 +404,7 @@
       </div>
 
       <button class="btn-join" id="btnJoin" onclick="joinMeeting()" disabled>
-        <span class="btn-icon">📹</span> Join Meeting
+        <span class="btn-icon">📹</span> Open Meeting
       </button>
 
       <div class="divider-hint">or</div>
@@ -486,19 +486,25 @@
     // Accept both full URL and code-only input
     var code;
     if (raw.includes('meet.google.com/')) {
-      // Extract code from URL
       code = raw.split('meet.google.com/').pop().split('?')[0].trim();
     } else {
       code = raw;
     }
 
-    // Navigate to Google Meet
+    // Open Google Meet in a NEW window — launcher stays in background
     var url = 'https://meet.google.com/' + encodeURIComponent(code);
-    window.location.href = url;
+    window.open(url, '_blank', 'noopener');
+
+    // Clear input field and re-focus ready for next meeting
+    document.getElementById('meetCode').value = '';
+    document.getElementById('btnJoin').disabled = true;
+    setTimeout(function() {
+      document.getElementById('meetCode').focus();
+    }, 300);
   }
 
   function newMeeting() {
-    window.location.href = 'https://meet.google.com/new';
+    window.open('https://meet.google.com/new', '_blank', 'noopener');
   }
 
   // Auto-focus input on load
