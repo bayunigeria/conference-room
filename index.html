@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conference Room Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0e1a;
+    --bg-card: #111827;
+    --bg-card2: #161e30;
+    --border: rgba(255,255,255,0.07);
+    --border-accent: rgba(29,158,117,0.3);
+    --teal: #1D9E75;
+    --teal-light: #5DCAA5;
+    --teal-dim: rgba(29,158,117,0.12);
+    --purple: #534AB7;
+    --purple-light: #AFA9EC;
+    --amber: #EF9F27;
+    --text-primary: #f0f4f8;
+    --text-secondary: rgba(255,255,255,0.5);
+    --text-muted: rgba(255,255,255,0.28);
+    --mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 72px 24px 64px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(29,158,117,0.14) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(29,158,117,0.1);
+    border: 1px solid var(--border-accent);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--teal-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  .hero-badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 6px rgba(29,158,117,0.7);
+    animation: blink 2.5s infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .hero h1 {
+    font-size: clamp(32px, 6vw, 52px);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    margin-bottom: 18px;
+    position: relative;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--teal-light);
+    font-weight: 500;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 480px;
+    margin: 0 auto;
+    font-weight: 300;
+    position: relative;
+  }
+
+  /* DEVICE BAR */
+  .device-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .device-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .device-chip .icon {
+    font-size: 16px;
+  }
+
+  .device-chip strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  /* MAIN CONTENT */
+  .main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* SECTION HEADER */
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal-light);
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .section-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+    font-weight: 300;
+  }
+
+  /* STEP CARDS */
+  .steps { display: flex; flex-direction: column; gap: 4px; margin-bottom: 56px; }
+
+  .step-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .step-card:hover { border-color: rgba(255,255,255,0.14); }
+
+  .step-card.active {
+    border-color: var(--border-accent);
+    background: var(--bg-card2);
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+  }
+
+  .step-num-badge {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    font-family: var(--mono);
+  }
+
+  .step-card.active .step-num-badge {
+    background: rgba(29,158,117,0.15);
+    border-color: rgba(29,158,117,0.4);
+    color: var(--teal-light);
+  }
+
+  .step-header-text { flex: 1; }
+
+  .step-header-title {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .step-header-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .step-toggle {
+    font-size: 18px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    user-select: none;
+  }
+
+  .step-card.active .step-toggle { transform: rotate(180deg); }
+
+  .step-body {
+    display: none;
+    padding: 0 20px 20px 68px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .step-card.active .step-body { display: block; }
+
+  .step-body p + p { margin-top: 10px; }
+
+  .step-body .tip {
+    display: flex;
+    gap: 10px;
+    background: rgba(239,159,39,0.08);
+    border: 1px solid rgba(239,159,39,0.2);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: rgba(239,159,39,0.85);
+  }
+
+  .step-body .tip-icon { flex-shrink: 0; }
+
+  .step-body code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: rgba(255,255,255,0.07);
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: rgba(255,255,255,0.75);
+  }
+
+  .step-body .substeps {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .substep {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .substep-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--teal);
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+
+  /* AUDIO SETTINGS SECTION */
+  .settings-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 56px;
+  }
+
+  .settings-title {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .settings-title .badge {
+    background: rgba(239,159,39,0.1);
+    border: 1px solid rgba(239,159,39,0.25);
+    color: var(--amber);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .settings-rows { display: flex; flex-direction: column; gap: 2px; }
+
+  .settings-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 16px;
+    align-items: start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .settings-row:last-child { border-bottom: none; }
+
+  .settings-row-label { color: var(--text-muted); padding-top: 1px; }
+
+  .settings-row-val {
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .settings-row-val strong {
+    display: block;
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  /* TROUBLESHOOT */
+  .trouble-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 56px; }
+
+  .trouble-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+
+  .trouble-q {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .trouble-q-icon {
+    color: var(--amber);
+    font-size: 15px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .trouble-a {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding-left: 25px;
+  }
+
+  .trouble-a code {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: rgba(255,255,255,0.07);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  /* DIVIDER */
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
+
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 24px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* SCROLLSPY progress */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--teal), var(--purple));
+    z-index: 100;
+    transition: width 0.1s;
+  }
+
+  @media (max-width: 480px) {
+    .hero { padding: 52px 20px 48px; }
+    .step-body { padding-left: 20px; }
+    .settings-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-badge"><span class="dot"></span> Conference Room — Ready</div>
+  <h1>How to Use<br><em>Conference Room</em></h1>
+  <p class="hero-sub">Step-by-step guide for Google Meet — no account needed, nothing to install.</p>
+</div>
+
+<div class="device-bar">
+  <div class="device-chip"><span class="icon">🖥️</span> <strong>Intel NUC</strong> — Main PC</div>
+  <div class="device-chip"><span class="icon">📷</span> <strong>Logitech MeetUp</strong> — Camera</div>
+  <div class="device-chip"><span class="icon">🔊</span> <strong>Jabra Speak 750</strong> — Mic & Speaker</div>
+  <div class="device-chip"><span class="icon">📺</span> <strong>LG Smart TV 75"</strong> — Display</div>
+</div>
+
+<div class="main">
+
+  <!-- QUICK START -->
+  <div class="section-eyebrow">Start here</div>
+  <div class="section-title">Start a Google Meet</div>
+  <div class="section-desc">Follow these steps in order. Click each step to expand details.</div>
+
+  <div class="steps" id="steps">
+
+    <div class="step-card active" onclick="toggleStep(this)">
+      <div class="step-header">
+        <div class="step-num-badge">1</div>
+        <div class="step-header-text">
+          <div class="step-header-title">Turn on the TV and PC</div>
+          <div class="step-header-hint">Make sure both devices are on before starting</div>
+        </div>
+        <div class="step-toggle">▾</div>
+      </div>
+      <div class="step-body">
+        <div class="substeps">
+          <div class="substep"><div class="substep-dot"></div><div>Press the power button on the <strong>LG TV</strong> using the remote. Wait until the screen is fully on.</div></div>
+          <div class="substep"><div class="substep-dot"></div><div>If the TV shows a black screen, press <code>INPUT</code> on the remote and select <code>HDMI 1</code> (or whichever port the NUC is connected to).</div></div>
+          <div class="substep"><div class="substep-dot"></div><div>The <strong>Intel NUC</strong> is usually already on. If not, press the small power button on the NUC unit.</div></div>
+        </div>
+        <div class="tip">
+          <span class="tip-icon">⚡</span>
+          <span>The guide wallpaper on the TV screen means the PC is on and ready to use.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card" onclick="toggleStep(this)">
+      <div class="step-header">
+        <div class="step-num-badge">2</div>
+        <div class="step-header-text">
+          <div class="step-header-title">Open Google Meet in the browser</div>
+          <div class="step-header-hint">There's already a shortcut on the PC desktop</div>
+        </div>
+        <div class="step-toggle">▾</div>
+      </div>
+      <div class="step-body">
+        <div class="substeps">
+          <div class="substep"><div class="substep-dot"></div><div>Use the mouse and keyboard on the table.</div></div>
+          <div class="substep"><div class="substep-dot"></div><div>Double-click the <strong>Google Meet</strong> icon on the desktop, or open Chrome and type <code>meet.google.com</code> in the address bar.</div></div>
+          <div class="substep"><div class="substep-dot"></div><div>Google Meet will open directly — no login required.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card" onclick="toggleStep(this)">
+      <div class="step-header">
+        <div class="step-num-badge">3</div>
+        <div class="step-header-text">
+          <div class="step-header-title">Enter the meeting code</div>
+          <div class="step-header-hint">The code is sent by the meeting organiser</div>
+        </div>
+        <div class="step-toggle">▾</div>
+      </div>
+      <div class="step-body">
+        <p>Find the meeting code in your email invite or message from the organiser. Example format: <code>abc-defg-hij</code></p>
+        <div class="substeps" style="margin-top: 14px;">
+          <div class="substep"><div class="substep-dot"></div><div>Click the <strong>"Enter a code or link"</strong> field on meet.google.com.</div></div>
+          <div class="substep"><div class="substep-dot"></div><div>Type or paste the meeting code, then press <code>Enter</code> or click <strong>Join</strong>.</div></div>
+          <div class="substep"><div class="substep-dot"></div><div>You will enter a waiting room. Click <strong>Ask to join</strong> or <strong>Join now</strong>.</div></div>
+        </div>
+        <div class="tip">
+          <span class="tip-icon">💡</span>
+          <span>If the organiser shares a <strong>link</strong> instead of a code, just tap it on your phone — the browser will open automatically.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card" onclick="toggleStep(this)">
+      <div class="step-header">
+        <div class="step-num-badge">4</div>
+        <div class="step-header-text">
+          <div class="step-header-title">Check camera & audio are working</div>
+          <div class="step-header-hint">Check before joining the meeting</div>
+        </div>
+        <div class="step-toggle">▾</div>
+      </div>
+      <div class="step-body">
+        <p>Before joining, Google Meet shows a camera preview. Make sure:</p>
+        <div class="substeps" style="margin-top: 14px;">
+          <div class="substep"><div class="substep-dot"></div><div><strong>Camera is active</strong> — you should see a room preview on screen. If not, check the troubleshooting section below.</div></div>
+          <div class="substep"><div class="substep-dot"></div><div><strong>Microphone is not muted</strong> — the mic icon should not have a red line through it.</div></div>
+          <div class="substep"><div class="substep-dot"></div><div>Click the <strong>⋮ (three dots)</strong> icon in the preview to manually select audio/video devices if needed.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card" onclick="toggleStep(this)">
+      <div class="step-header">
+        <div class="step-num-badge">5</div>
+        <div class="step-header-text">
+          <div class="step-header-title">When the meeting ends</div>
+          <div class="step-header-hint">Shut down properly so it's ready for the next session</div>
+        </div>
+        <div class="step-toggle">▾</div>
+      </div>
+      <div class="step-body">
+        <div class="substeps">
+          <div class="substep"><div class="substep-dot"></div><div>Click the red <strong>☎ Leave call</strong> button at the bottom of the Meet screen.</div></div>
+          <div class="substep"><div class="substep-dot"></div><div>Close Chrome.</div></div>
+          <div class="substep"><div class="substep-dot"></div><div>Turn off the TV with the remote. The PC can be left on or shut down per office policy.</div></div>
+        </div>
+        <div class="tip">
+          <span class="tip-icon">🔒</span>
+          <span>Since no Google account is signed in on this PC, no meeting data is stored after the browser is closed.</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- AUDIO SETTINGS -->
+  <div class="section-eyebrow">Audio Settings</div>
+  <div class="section-title">Make sure Jabra is selected as the main audio device</div>
+  <div class="section-desc">This is important so audio goes through the Jabra Speak, not the MeetUp camera.</div>
+
+  <div class="settings-card">
+    <div class="settings-title">
+      Settings in Google Meet
+      <span class="badge">Check this on first use</span>
+    </div>
+    <div class="settings-rows">
+      <div class="settings-row">
+        <div class="settings-row-label">How to open</div>
+        <div class="settings-row-val">
+          <strong>Click ⋮ → Settings → Audio</strong>
+          Inside a meeting, click the three-dot icon at the bottom right, choose Settings, then the Audio tab.
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-label">Microphone</div>
+        <div class="settings-row-val">
+          <strong>Jabra Speak 750 Stereo (or Jabra)</strong>
+          Do not select "Logitech MeetUp" as the microphone.
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-label">Speaker</div>
+        <div class="settings-row-val">
+          <strong>Jabra Speak 750 Stereo (or Jabra)</strong>
+          Participant audio will come through the Jabra, not the TV.
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-label">Camera</div>
+        <div class="settings-row-val">
+          <strong>Logitech MeetUp</strong>
+          Only the camera uses the MeetUp.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- TROUBLESHOOT -->
+  <div class="section-eyebrow">Help</div>
+  <div class="section-title">Frequently asked questions</div>
+  <div class="section-desc">Check here first before contacting IT support.</div>
+
+  <div class="trouble-list">
+
+    <div class="trouble-item">
+      <div class="trouble-q"><span class="trouble-q-icon">?</span> TV screen is black, no image from the PC</div>
+      <div class="trouble-a">
+        Press the <code>INPUT</code> button on the TV remote and select <code>HDMI 1</code> (or try other HDMI ports until the image appears). Make sure the HDMI cable between the NUC and TV is properly connected.
+      </div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q"><span class="trouble-q-icon">?</span> Camera not detected in Google Meet</div>
+      <div class="trouble-a">
+        If a camera permission popup appears in the browser, click <strong>Allow</strong>. If it still does not show, check that the Logitech MeetUp USB cable is connected to the PC. Try refreshing the browser page.
+      </div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q"><span class="trouble-q-icon">?</span> No audio from speakers / others cannot hear me</div>
+      <div class="trouble-a">
+        Go to Audio Settings in Google Meet (⋮ → Settings → Audio). Make sure both <strong>Microphone</strong> and <strong>Speaker</strong> are set to <code>Jabra Speak 750</code>. If Jabra does not appear, check the Jabra USB cable to the PC.
+      </div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q"><span class="trouble-q-icon">?</span> Echo or reverb during the meeting</div>
+      <div class="trouble-a">
+        Echo usually happens when two audio devices are active at the same time. Make sure only the <strong>Jabra</strong> is selected as microphone and speaker in Google Meet — not the Logitech MeetUp and not the PC's built-in audio.
+      </div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q"><span class="trouble-q-icon">?</span> Need further assistance</div>
+      <div class="trouble-a">
+        Contact the IT team via the ticketing system or the direct contact posted on the room information board.
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="footer">
+  Conference Room Guide Conference Room Guide &nbsp;·&nbsp; Scan the QR on the TV screen to open this pagenbsp;·Conference Room Guide &nbsp;·&nbsp; Scan the QR on the TV screen to open this pagenbsp; Scan the QR on the TV screen to open this page
+</div>
+
+<script>
+  function toggleStep(el) {
+    const isActive = el.classList.contains('active');
+    document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active'));
+    if (!isActive) el.classList.add('active');
+  }
+
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight);
+    document.getElementById('progress').style.width = (scrolled * 100) + '%';
+  });
+</script>
+
+</body>
+</html>
